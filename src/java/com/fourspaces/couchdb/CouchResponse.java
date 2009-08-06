@@ -12,13 +12,14 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 package com.fourspaces.couchdb;
 
 import java.io.IOException;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -35,35 +36,36 @@ import org.apache.http.util.EntityUtils;
 
 /**
  * The CouchResponse parses the HTTP response returned by the CouchDB server.
- * This is almost never called directly by the user, but indirectly through
- * the Session and Database objects.
+ * This is almost never called directly by the user, but indirectly through the
+ * Session and Database objects.
  * <p>
- * Given a CouchDB response, it will determine if the request was successful 
- * (status 200,201,202), or was an error.  If there was an error, it parses the returned json error
- * message.
+ * Given a CouchDB response, it will determine if the request was successful
+ * (status 200,201,202), or was an error. If there was an error, it parses the
+ * returned json error message.
  * 
  * @author mbreese
- *
+ * 
  */
 public class CouchResponse {
 	Log log = LogFactory.getLog(CouchResponse.class);
-	
+
 	private String body;
 	private String path;
 	private Header[] headers;
 	private int statusCode;
 	private String methodName;
-	
+
 	boolean ok = false;
 
 	private String error_id;
 	private String error_reason;
-	
+
 	/**
-	 * C-tor parses the method results to build the CouchResponse object.
-	 * First, it reads the body (hence the IOException) from the method
-	 * Next, it checks the status codes to determine if the request was successful.
-	 * If there was an error, it parses the error codes.
+	 * C-tor parses the method results to build the CouchResponse object. First,
+	 * it reads the body (hence the IOException) from the method Next, it checks
+	 * the status codes to determine if the request was successful. If there was
+	 * an error, it parses the error codes.
+	 * 
 	 * @param method
 	 * @throws IOException
 	 */
@@ -99,7 +101,18 @@ public class CouchResponse {
 				(isPost && statusCode==201) ||
 				(isDelete && statusCode==202) ||
 		    (isDelete && statusCode==200)) {
-				ok = JSONObject.fromObject(body).getBoolean("ok");
+				try {
+				JSONObject responseObject = JSONObject.fromObject(body);
+				if( responseObject.containsKey("ok") ) {
+					ok = responseObject.getBoolean( "ok" );
+				} else {
+					ok = false;
+				}
+				} catch( JSONException je ) {
+					// This might be the new bulk update response, which is a JSONArray
+					JSONArray array = JSONArray.fromObject( body );
+					ok = true;
+				}
 			
 		} else if ( (req instanceof HttpGet) || ( (req instanceof HttpPost) && statusCode==200 ) ) {
 			ok=true;
@@ -112,53 +125,61 @@ public class CouchResponse {
 	 * A better toString for this object... can be very verbose though.
 	 */
 	public String toString() {
-		return "["+methodName+"] "+path+" ["+statusCode+"] "+" => "+body;
+		return "[" + methodName + "] " + path + " [" + statusCode + "] "
+				+ " => " + body;
 	}
-	
+
 	/**
-	 * Retrieves the body of the request as a JSONArray object. (such as listing database names)
+	 * Retrieves the body of the request as a JSONArray object. (such as listing
+	 * database names)
+	 * 
 	 * @return
 	 */
-	public JSONArray getBodyAsJSONArray() {		
+	public JSONArray getBodyAsJSONArray() {
 		return JSONArray.fromObject(body);
 	}
 
 	/**
 	 * Was the request successful?
+	 * 
 	 * @return
 	 */
 	public boolean isOk() {
 		return ok;
 	}
-	
+
 	/**
 	 * What was the error id?
+	 * 
 	 * @return
 	 */
 	public String getErrorId() {
-		if (error_id!=null) {
+		if (error_id != null) {
 			return error_id;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * what was the error reason given?
+	 * 
 	 * @return
 	 */
 	public String getErrorReason() {
-		if (error_reason!=null) {
+		if (error_reason != null) {
 			return error_reason;
 		}
 		return null;
 	}
 
 	/**
-	 * Returns the body of the response as a JSON Object (such as for a document)
+	 * Returns the body of the response as a JSON Object (such as for a
+	 * document)
+	 * 
 	 * @return
 	 */
 	public JSONObject getBodyAsJSON() {
-		if (body==null) {
+		if (body == null) {
 			return null;
 		}
 		return JSONObject.fromObject(body);
@@ -166,11 +187,12 @@ public class CouchResponse {
 
 	/**
 	 * Retrieves a specific header from the response (not really used anymore)
+	 * 
 	 * @param key
 	 * @return
 	 */
 	public String getHeader(String key) {
-		for (Header h: headers) {
+		for (Header h : headers) {
 			if (h.getName().equals(key)) {
 				return h.getValue();
 			}

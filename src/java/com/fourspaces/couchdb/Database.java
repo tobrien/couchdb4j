@@ -250,8 +250,7 @@ public class Database {
 	   
 	   if (resp.isOk()) {
 	      // TODO set Ids and revs and name (db)
-	     final JSONObject respJsonObj = resp.getBodyAsJSON();
-	     JSONArray respJsonArray = (JSONArray) respJsonObj.get("new_revs");
+	     final JSONArray respJsonArray = resp.getBodyAsJSONArray();
 	     JSONObject respObj = null;
 	     String id = null;
 	     String rev = null;
