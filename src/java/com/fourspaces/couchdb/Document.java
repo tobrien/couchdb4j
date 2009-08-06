@@ -145,15 +145,17 @@ public class Document implements Map {
 	 */
 	public String[] getRevisions() throws IOException {
 		String[] revs = null;
-		if (!object.has("_revs")) {
+		if (!object.has("_revisions")) {
 			populateRevisions();
 		} 
 		//System.out.println(object);
-		JSONArray ar = object.getJSONArray("_revs");
-		if (ar!=null) {
-			revs = new String[ar.size()];
-			for (int i=0 ; i< ar.size(); i++) {
-				revs[i]=ar.getString(i);
+		JSONObject revisions = object.getJSONObject("_revisions");
+		JSONArray ids = revisions.getJSONArray("ids");
+		String start = revisions.getString("start");
+		if (ids!=null) {
+			revs = new String[ids.size()];
+			for (int i=0 ; i< ids.size(); i++) {
+				revs[i]=start + "-" + ids.getString(i);
 			}
 		}
 		return revs;
