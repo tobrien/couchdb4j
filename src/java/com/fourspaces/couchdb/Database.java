@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -179,10 +180,11 @@ public class Database {
 	 */
 	public ViewResults adhoc(AdHocView view) {
 	  
-	  JSONObject ahViewJSONObj = new JSONObject();
-	  ahViewJSONObj.accumulate("map", view.getFunction());
+		JSONObject ahViewJSONObj = new JSONObject();
+	  ahViewJSONObj.accumulate("map", view.getFunction() + " " );
 	  	  
 		CouchResponse resp = session.post(name+"/_temp_view", ahViewJSONObj.toString());
+//		CouchResponse resp = session.post(name+"/_temp_view", "{\"map\":\"function(doc){ emit(null, doc); }\"}");
 		if (resp.isOk()) {
 			ViewResults results = new ViewResults(view,resp.getBodyAsJSON());
 			results.setDatabase(this);
