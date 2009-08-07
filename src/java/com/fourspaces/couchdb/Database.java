@@ -180,11 +180,10 @@ public class Database {
 	 */
 	public ViewResults adhoc(AdHocView view) {
 	  
-		JSONObject ahViewJSONObj = new JSONObject();
+  	  JSONObject ahViewJSONObj = new JSONObject();
 	  ahViewJSONObj.accumulate("map", view.getFunction() + " " );
 	  	  
 		CouchResponse resp = session.post(name+"/_temp_view", ahViewJSONObj.toString());
-//		CouchResponse resp = session.post(name+"/_temp_view", "{\"map\":\"function(doc){ emit(null, doc); }\"}");
 		if (resp.isOk()) {
 			ViewResults results = new ViewResults(view,resp.getBodyAsJSON());
 			results.setDatabase(this);

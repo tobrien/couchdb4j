@@ -192,7 +192,7 @@ public class Document implements Map {
 		object.put("language", "javascript"); //FIXME specify language
         
 		JSONObject funcs = new JSONObject();
-		funcs.put("map", function);
+		funcs.put("map", function + " ");
 
 
 		JSONObject viewMap = new JSONObject();
