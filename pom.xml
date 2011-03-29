@@ -9,19 +9,9 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <name>CouchDB4J</name>
     <version>0.3.0-i386-1</version>
     <url>http://code.google.com/p/couchdb4j/</url>
-
     <build>
         <sourceDirectory>src/java</sourceDirectory>
         <testSourceDirectory>src/test</testSourceDirectory>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <dependencies>
@@ -89,7 +79,6 @@ http://maven.apache.org/maven-v4_0_0.xsd">
             <version>4.0-beta2</version>
         </dependency>
     </dependencies>
-
     <pluginRepositories>
         <pluginRepository>
             <id>codehaus.snapshots</id>
@@ -99,12 +88,23 @@ http://maven.apache.org/maven-v4_0_0.xsd">
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+  <distributionManagement>
+	  <repository>
+		  <id>discursive-releases</id>
+		  <name>Discursive Releases</name>
+		  <url>http://build.discursive.com/nexus/content/repositories/releases/</url>
+	  </repository>
+	  <snapshotRepository>
+		  <id>discursive-snapshots</id>
+		  <name>Discursive Snapshots</name>
+		  <url>http://build.discursive.com/nexus/content/repositories/snapshots/</url>
+	  </snapshotRepository>
+  </distributionManagement>
+  <scm>
+    <connection>scm:git:git://github.com/tobrien/couchdb4j.git</connection>
+    <url>scm:git:git://github.com/tobrien/couchdb4j.git</url>
+    <developerConnection>scm:git:git://github.com/tobrien/couchdb4j.git</developerConnection>	
+  </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>nexus</id>
-            <name>My Nexus</name>
-            <url>http://localhost:8081/nexus/content/repositories/thirdparty/</url>
-        </repository>
-    </distributionManagement>
+
 </project>
