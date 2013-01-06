@@ -1,3 +1,8 @@
+NOTE: tobrien's fork of this project is Dormant.  I'm just leaving it here, just in case someone depends on this thing.
+
+06 Jan 2012
+
+
 CouchDB4J
 ---------
 14 Sept 2007
